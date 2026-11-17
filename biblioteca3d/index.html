@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biblioteca 3D Interativa</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; overflow: hidden; background: #17131a; font-family: Georgia, serif; color: #f7ead8; }
+  #info { position: fixed; top: 18px; left: 18px; z-index: 2; background: rgba(20,14,18,.85); padding: 17px 20px; border: 1px solid #8e7051; border-radius: 10px; max-width: 320px; }
+  h1 { margin: 0 0 8px; font-size: 21px; }
+  p { margin: 5px 0; font-size: 13px; line-height: 1.5; }
+  #selected { color: #e9c28f; min-height: 21px; }
+  button { margin-top: 10px; padding: 9px 12px; border-radius: 6px; border: 1px solid #c29a67; background: #463023; color: #fff2df; cursor: pointer; }
+  button:hover { background: #65452d; }
+  #error { position: fixed; bottom: 12px; left: 12px; color: #fff; background: #8b2735; padding: 9px; display:none; max-width:90%; }
+</style>
+</head>
+<body>
+<div id="info"><h1>Biblioteca 3D</h1><p>Arraste o mouse para girar a câmera e use a rodinha para aproximar.</p><p>Clique em um livro para destacá-lo.</p><p id="selected">Selecione um livro na estante.</p><button id="lightButton">Apagar luminária</button> <button id="resetButton">Recolocar livro</button></div>
+<div id="error"></div>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x201b20);
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(8, 5.5, 10);
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.6, 0);
+controls.enableDamping = true;
+controls.minDistance = 3.2;
+controls.maxDistance = 18;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.update();
+
+const material = (color, roughness=0.85) => new THREE.MeshStandardMaterial({color, roughness});
+const wood = material(0x513523), darkWood = material(0x302015), wall = material(0x69564e), floorMat = material(0x785641);
+const brass = new THREE.MeshStandardMaterial({color: 0xd4ad66, metalness: .65, roughness: .35});
+function cube(w,h,d, mat, x,y,z, parent=scene){
+ const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+ mesh.position.set(x,y,z); mesh.castShadow=true; mesh.receiveShadow=true; parent.add(mesh); return mesh;
+}
+// Sala: chão, parede e tapete
+cube(14,.25,11,floorMat,0,-.15,0);
+cube(14,6,.2,wall,0,3,-5.35);
+cube(.2,6,11,wall,-7,3,0);
+cube(.2,6,11,wall,7,3,0);
+cube(4,.025,5,material(0x713b3d),0,.005,1.3);
+// Linhas de tábuas no piso
+for (let i=0;i<11;i++) cube(14,.004,.018,darkWood,0,-.015,-5+i);
+
+// Prateleiras: duas estantes, cada uma com várias divisórias
+const books=[];
+function shelf(cx){
+ const group=new THREE.Group(); group.position.set(cx,0,-4.62); scene.add(group);
+ cube(2.9,4.3,.25,darkWood,0,2.15,-.36,group);
+ cube(.18,4.35,.85,wood,-1.42,2.15,0,group);
+ cube(.18,4.35,.85,wood,1.42,2.15,0,group);
+ for(let row=0;row<4;row++){
+   const base=.35+row*1.02;
+   cube(2.9,.14,.91,wood,0,base,0,group);
+   for(let i=0;i<11;i++){
+     const colors=[0x7c453e,0x315553,0x66537c,0xa17c44,0x34436c,0x705038];
+     const height=.60 + ((i*3+row)%5)*.045;
+     const book=cube(.18,height,.59,material(colors[(i+row*2)%colors.length]),-1.14+i*.225,base+.08+height/2,.07,group);
+     // uma faixa dourada na lombada
+     cube(.15,.022,.015,brass,0,height*.25, .302,book);
+     book.userData.isBook=true;
+     book.userData.title=`Livro ${row*11+i+1}`;
+     books.push(book);
+   }
+ }
+ cube(2.98,.14,.95,wood,0,4.32,0,group);
+}
+shelf(-3.1); shelf(3.1);
+
+// Mesa central
+cube(2.9,.19,1.6,wood,0,1.12,1.5);
+for(const x of [-1.2,1.2]) for(const z of [.9,2.1]) cube(.16,1.08,.16,darkWood,x,.54,z);
+// Livro sobre a mesa
+const openBook=cube(.9,.12,.65,material(0xc6b190),-.6,1.29,1.5);
+openBook.rotation.y=.18;
+// Luminária
+const stem=new THREE.Mesh(new THREE.CylinderGeometry(.045,.065,.75,16),brass); stem.position.set(.8,1.58,1.55); scene.add(stem);
+const lampBase=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.06,24),brass); lampBase.position.set(.8,1.23,1.55); scene.add(lampBase);
+const shade=new THREE.Mesh(new THREE.ConeGeometry(.34,.46,24,1,true),material(0xc5a371)); shade.position.set(.8,1.98,1.55); shade.rotation.x=Math.PI; scene.add(shade);
+
+// Luzes
+const ambient=new THREE.AmbientLight(0xffe4cc, .65); scene.add(ambient);
+const ceiling=new THREE.DirectionalLight(0xffecd6, 1.2); ceiling.position.set(2,7,4); ceiling.castShadow=true; ceiling.shadow.mapSize.set(1024,1024); scene.add(ceiling);
+const lamp=new THREE.PointLight(0xffb957, 20, 5, 2); lamp.position.set(.8,1.77,1.55); lamp.castShadow=true; scene.add(lamp);
+const glow=new THREE.Mesh(new THREE.SphereGeometry(.11,16,12),new THREE.MeshBasicMaterial({color:0xffd68c})); glow.position.copy(lamp.position); scene.add(glow);
+let lightOn=true;
+document.getElementById('lightButton').onclick=()=>{
+ lightOn=!lightOn; lamp.visible=glow.visible=lightOn;
+ document.getElementById('lightButton').textContent=lightOn?'Apagar luminária':'Acender luminária';
+};
+
+// Selecionar livro com raycaster, destacando-o em frente à própria posição
+const raycaster=new THREE.Raycaster(); const pointer=new THREE.Vector2();
+let selected=null; let selectedOriginal=null;
+function resetBook(){
+ if(!selected)return;
+ selected.position.copy(selectedOriginal.position);
+ selected.rotation.copy(selectedOriginal.rotation);
+ selected.scale.copy(selectedOriginal.scale);
+ selected=null; selectedOriginal=null;
+ document.getElementById('selected').textContent='Selecione um livro na estante.';
+}
+document.getElementById('resetButton').onclick=resetBook;
+let pointerDown=null;
+renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerup',e=>{
+ if(!pointerDown || Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y)>6)return;
+ pointerDown=null;
+ pointer.x=(e.clientX/innerWidth)*2-1; pointer.y=-(e.clientY/innerHeight)*2+1;
+ raycaster.setFromCamera(pointer,camera);
+ const intersections=raycaster.intersectObjects(books,false);
+ if(!intersections.length) return;
+ const book=intersections[0].object;
+ if(selected===book){resetBook();return;}
+ resetBook(); selected=book;
+ selectedOriginal={position:book.position.clone(),rotation:book.rotation.clone(),scale:book.scale.clone()};
+ book.position.z+=.65;
+ book.rotation.y=-.18;
+ book.scale.setScalar(1.13);
+ document.getElementById('selected').textContent=`Selecionado: ${book.userData.title}`;
+});
+
+function animate(time){
+ requestAnimationFrame(animate);
+ controls.update();
+ if(selected) selected.rotation.y=-.18+Math.sin(time*.0015)*.08;
+ renderer.render(scene,camera);
+}
+animate(0);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>
