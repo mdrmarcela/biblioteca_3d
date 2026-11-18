@@ -1,0 +1,7 @@
+{
+  "name": "biblioteca-aurora",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Biblioteca 3D interativa, organizada em módulos ES, sem etapa de build."
+}

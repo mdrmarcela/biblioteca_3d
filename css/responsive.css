@@ -1,0 +1,273 @@
+/* Painéis compactos e controles de toque. */
+@media (max-width: 1100px) {
+  .topbar {
+    left: 18px;
+    right: 18px;
+  }
+  .brand h1 {
+    font-size: 22px;
+  }
+  .brand .eyebrow {
+    font-size: 8px;
+  }
+  .action {
+    font-size: 11px;
+    padding: 9px 11px;
+  }
+  .catalog-panel {
+    left: 18px;
+    width: 267px;
+    padding: 18px 15px 0;
+  }
+  .book-panel {
+    right: 18px;
+    width: 267px;
+  }
+  .panel-heading h2 {
+    font-size: 24px;
+  }
+  .scene-label {
+    top: 90px;
+  }
+  .bottom-bar {
+    left: 18px;
+    right: 18px;
+  }
+  .view-nav button {
+    padding: 10px;
+  }
+  .chip {
+    padding: 7px;
+  }
+}
+@media (max-height: 780px) and (min-width: 761px) {
+  .catalog-panel {
+    top: 97px;
+    bottom: 125px;
+  }
+  .panel-heading h2 {
+    font-size: 23px;
+  }
+  .catalog-summary {
+    margin-bottom: 11px;
+  }
+  .catalog-tools {
+    margin-bottom: 6px;
+  }
+  .book-panel {
+    top: 97px;
+    max-height: calc(100dvh - 222px);
+  }
+  .book-cover {
+    height: 89px;
+    width: 68px;
+    margin: 14px auto;
+  }
+}
+@media (max-width: 760px) {
+  .topbar {
+    top: max(14px, env(safe-area-inset-top));
+    left: 14px;
+    right: 14px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .brand h1 {
+    font-size: 22px;
+  }
+  .brand-icon {
+    width: 36px;
+    height: 42px;
+    font-size: 26px;
+  }
+  .top-actions {
+    width: 100%;
+    gap: 5px;
+  }
+  .top-actions .action {
+    flex: 1;
+    font-size: 10px;
+    padding: 8px 6px;
+    min-height: 38px;
+    white-space: nowrap;
+  }
+  .scene-label {
+    top: 127px;
+    font-size: 8px;
+    width: max-content;
+  }
+  .catalog-panel,
+  .book-panel {
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: calc(138px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: min(56dvh, 500px);
+    padding: 16px 17px 0;
+  }
+  .catalog-panel {
+    height: 440px;
+  }
+  .panel-heading h2 {
+    font-size: 23px;
+    margin: 5px 0 8px;
+  }
+  .panel-heading h2 br {
+    display: none;
+  }
+  .catalog-summary {
+    margin-bottom: 12px;
+  }
+  .categories {
+    margin: 9px 0 2px;
+  }
+  .chip {
+    font-size: 11px;
+    flex: 1;
+    min-height: 35px;
+  }
+  .catalog-tools {
+    margin-bottom: 5px;
+  }
+  .book-panel {
+    padding-bottom: 15px;
+  }
+  .book-cover {
+    float: left;
+    width: 61px;
+    height: 84px;
+    margin: 17px 16px 10px 0;
+  }
+  .book-cover span {
+    font-size: 6px;
+  }
+  .book-cover small {
+    font-size: 5px;
+  }
+  .book-panel > .eyebrow:not(:first-of-type) {
+    margin-top: 20px;
+  }
+  .book-panel h2 {
+    font-size: 23px;
+    margin-right: 10px;
+  }
+  .book-panel .description {
+    clear: both;
+  }
+  .bottom-bar {
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .view-nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .view-nav button {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 7px;
+    font-size: 11px;
+    gap: 7px;
+  }
+  .utility-actions {
+    margin-left: auto;
+  }
+  .bottom-bar .action {
+    min-height: 39px;
+  }
+  .help {
+    display: none;
+  }
+  .settings-panel {
+    right: 12px;
+    bottom: calc(138px + env(safe-area-inset-bottom));
+    width: min(300px, calc(100% - 24px));
+  }
+  .toast {
+    top: 148px;
+    max-width: calc(100% - 32px);
+    width: max-content;
+    text-align: center;
+  }
+  .modal {
+    padding: 28px 20px 20px;
+  }
+  .modal h2 {
+    font-size: 26px;
+  }
+  .requirement-grid {
+    grid-template-columns: 1fr;
+  }
+  .icon-button {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+}
+@media (max-height: 540px) {
+  .catalog-panel,
+  .book-panel {
+    top: 75px;
+    bottom: 80px;
+    max-height: none;
+    height: auto;
+    width: min(300px, calc(100% - 24px));
+  }
+  .catalog-panel .panel-heading,
+  .catalog-summary {
+    display: none;
+  }
+  .topbar {
+    flex-wrap: nowrap;
+  }
+  .top-actions {
+    width: auto;
+  }
+  .brand .eyebrow,
+  .brand-icon,
+  .scene-label,
+  .help {
+    display: none;
+  }
+  .brand h1 {
+    font-size: 18px;
+    white-space: nowrap;
+  }
+  .bottom-bar {
+    flex-wrap: nowrap;
+    bottom: 12px;
+  }
+  .view-nav {
+    width: auto;
+    order: 0;
+  }
+  .view-nav button {
+    padding: 9px 7px;
+  }
+  .view-nav button span {
+    display: none;
+  }
+  #pauseButton {
+    display: none;
+  }
+  .settings-panel {
+    bottom: 75px;
+  }
+  .book-panel .book-cover {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#18151a" />
+    <meta
+      name="description"
+      content="Explore a Biblioteca Aurora: um acervo fictício em uma experiência tridimensional interativa."
+    />
+    <title>Biblioteca Aurora | Experiência 3D</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23251d20'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-size='45' fill='%23e2ba78'%3E✦%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/build/three.module.js",
+          "three/addons/controls/OrbitControls.js": "./vendor/three/controls/OrbitControls.js"
+        }
+      }
+    </script>
+    <script defer src="js/bootstrap.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#searchInput">Ir para o catálogo</a>
+    <div
+      id="scene"
+      aria-label="Visualização tridimensional da biblioteca"
+    ></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="loading" class="loading" role="status">
+      <div class="loading-star">✦</div>
+      <strong>Biblioteca Aurora</strong
+      ><span>Abrindo um mundo entre páginas…</span>
+    </div>
+    <div id="app" inert>
+      <header class="ui topbar">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">✦</div>
+          <div>
+            <div class="eyebrow">Um mundo entre páginas</div>
+            <h1>Biblioteca Aurora</h1>
+          </div>
+        </div>
+        <nav class="top-actions" aria-label="Controles da experiência">
+          <button class="action primary" id="tourButton" aria-pressed="false">
+            ▷ Visita guiada
+          </button>
+          <button
+            class="action"
+            id="dayButton"
+            aria-pressed="false"
+            title="Alternar dia e noite (N)"
+          >
+            ☀ Dia
+          </button>
+          <button
+            class="action"
+            id="lampButton"
+            aria-pressed="true"
+            title="Alternar luminária (L)"
+          >
+            ◉ Luz acesa
+          </button>
+          <button class="action" id="aboutButton">Sobre o projeto</button>
+        </nav>
+      </header>
+
+      <aside
+        id="catalogPanel"
+        class="ui catalog-panel"
+        aria-label="Catálogo interativo"
+      >
+        <div class="panel-heading">
+          <div>
+            <div class="eyebrow">Acervo de demonstração</div>
+            <h2>Encontre sua próxima<br />descoberta.</h2>
+          </div>
+          <button
+            id="closeCatalog"
+            class="icon-button"
+            aria-label="Recolher catálogo"
+            title="Recolher catálogo"
+          >
+            −
+          </button>
+        </div>
+        <div class="catalog-summary">
+          <span id="bookCount">144 volumes</span><span>3 coleções</span>
+        </div>
+        <label class="search"
+          ><span aria-hidden="true">⌕</span
+          ><input
+            id="searchInput"
+            type="search"
+            placeholder="Título ou coleção…"
+            aria-label="Buscar por título ou coleção"
+            autocomplete="off"
+          /><button
+            id="clearSearch"
+            class="icon-button"
+            aria-label="Limpar busca"
+            hidden
+          >
+            ×
+          </button></label
+        >
+        <div
+          id="categories"
+          class="categories"
+          role="group"
+          aria-label="Filtrar por coleção"
+        >
+          <button class="chip" data-category="Todos" aria-pressed="true">
+            Todos
+          </button>
+          <button class="chip" data-category="Literatura" aria-pressed="false">
+            Literatura
+          </button>
+          <button class="chip" data-category="Ciência" aria-pressed="false">
+            Ciência
+          </button>
+          <button class="chip" data-category="Fantasia" aria-pressed="false">
+            Fantasia
+          </button>
+        </div>
+        <div class="catalog-tools">
+          <button id="favoritesButton" class="text-button" aria-pressed="false">
+            ♡ Salvos (0)</button
+          ><button id="resetFilters" class="text-button muted">
+            Limpar filtros
+          </button>
+        </div>
+        <div class="result-title">
+          <span>Explore os volumes</span
+          ><span id="resultCount" role="status">144 resultados</span>
+        </div>
+        <div id="results" class="results"></div>
+        <footer class="catalog-footer">
+          <span id="visibleCount">12 de 144</span
+          ><button id="loadMore" class="text-button">Ver mais volumes</button>
+        </footer>
+      </aside>
+
+      <aside
+        id="bookPanel"
+        class="ui book-panel"
+        aria-labelledby="bookTitle"
+        hidden
+      >
+        <button
+          id="closeBook"
+          class="icon-button close"
+          aria-label="Fechar detalhes e recolocar livro"
+        >
+          ×
+        </button>
+        <div class="eyebrow">Da coleção Aurora</div>
+        <div id="bookIcon" class="book-cover" aria-hidden="true">
+          <span>COLEÇÃO<br />AURORA</span><b>✦</b
+          ><small id="coverVolume">VOLUME 01</small>
+        </div>
+        <div id="bookCategory" class="eyebrow"></div>
+        <h2 id="bookTitle" tabindex="-1"></h2>
+        <p id="bookAuthor" class="author"></p>
+        <p id="bookDescription" class="description"></p>
+        <button class="button-solid full" id="readButton">
+          Conhecer a obra <span aria-hidden="true">↗</span>
+        </button>
+        <div class="book-actions">
+          <button
+            class="button-outline"
+            id="favoriteButton"
+            aria-pressed="false"
+          >
+            ♡ Salvar</button
+          ><button class="button-outline" id="returnButton">Recolocar</button>
+        </div>
+        <p class="fiction-note">
+          Acervo fictício criado para esta experiência.
+        </p>
+      </aside>
+
+      <div class="ui scene-label">
+        <span class="ambient-dot" aria-hidden="true"></span
+        ><span id="ambienceLabel">Luz da manhã</span
+        ><span class="label-divider">/</span
+        ><span id="viewLabel">Visão geral</span>
+      </div>
+      <footer class="ui bottom-bar">
+        <button
+          id="catalogToggle"
+          class="action catalog-toggle"
+          aria-controls="catalogPanel"
+          aria-expanded="true"
+        >
+          ☷ Acervo
+        </button>
+        <nav class="view-nav" aria-label="Vistas da biblioteca">
+          <button data-view="overview" aria-pressed="true">
+            <span>01</span>Geral
+          </button>
+          <button data-view="shelves" aria-pressed="false">
+            <span>02</span>Estantes
+          </button>
+          <button data-view="table" aria-pressed="false">
+            <span>03</span>Mesa
+          </button>
+          <button data-view="window" aria-pressed="false">
+            <span>04</span>Janela
+          </button>
+        </nav>
+        <div class="utility-actions">
+          <button
+            id="pauseButton"
+            class="action"
+            aria-pressed="false"
+            title="Pausar animações decorativas"
+          >
+            Ⅱ Animação</button
+          ><button
+            id="settingsButton"
+            class="action"
+            aria-expanded="false"
+            aria-controls="settingsPanel"
+          >
+            ⚙ Ajustes
+          </button>
+        </div>
+      </footer>
+      <div id="settingsPanel" class="ui settings-panel" hidden>
+        <label for="qualitySelect">Qualidade gráfica</label
+        ><select id="qualitySelect">
+          <option value="balanced">Equilibrada</option>
+          <option value="low">Leve (sem sombras)</option></select
+        ><button id="fullscreenButton" class="button-outline full">
+          Tela cheia
+        </button>
+        <p>Use o modo leve se a cena estiver lenta.</p>
+      </div>
+      <div class="ui help">
+        Arraste para girar <span>·</span> Role para aproximar
+        <span>·</span> Clique em um livro
+        <button id="helpButton" class="text-button">Ver atalhos</button>
+      </div>
+      <div id="toast" class="toast" role="status"></div>
+    </div>
+
+    <dialog id="modal" class="modal" aria-labelledby="modalTitle">
+      <button
+        id="modalClose"
+        class="icon-button close"
+        aria-label="Fechar janela"
+      >
+        ×
+      </button>
+      <div id="modalContent"></div>
+    </dialog>
+    <section id="error" class="error-panel" role="alert" hidden>
+      <span class="eyebrow">Vamos abrir a biblioteca</span>
+      <h2>A cena ainda não carregou.</h2>
+      <p id="errorMessage"></p>
+      <button id="reloadButton" class="button-solid">Tentar novamente</button>
+    </section>
+    <noscript
+      ><div class="error-panel">
+        Ative o JavaScript para explorar a biblioteca tridimensional.
+      </div></noscript
+    >
+  </body>
+</html>
