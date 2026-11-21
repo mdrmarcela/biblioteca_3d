@@ -29,6 +29,10 @@ export function createEnvironment({
   function applyLamp() {
     objects.deskLight.visible = lamp;
     objects.lampBulb.material.emissiveIntensity = lamp ? 2.6 : 0;
+    // A luminária de canto acompanha o botão de luz.
+    objects.cornerLight.visible = lamp;
+    objects.cornerBulb.material.emissiveIntensity = lamp ? 2.6 : 0;
+    objects.cornerShade.material.emissiveIntensity = lamp ? 0.7 : 0;
     const button = document.getElementById("lampButton");
     button.setAttribute("aria-pressed", String(lamp));
     button.textContent = lamp ? "◉ Luz acesa" : "○ Luz apagada";

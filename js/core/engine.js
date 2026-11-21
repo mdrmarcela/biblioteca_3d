@@ -32,6 +32,18 @@ export function createEngine(container) {
   controls.maxPolarAngle = Math.PI / 2.05;
   controls.minAzimuthAngle = -Math.PI * 0.43;
   controls.maxAzimuthAngle = Math.PI * 0.43;
+  // A câmera não pode atravessar as paredes: a cada mudança de órbita a
+  // posição é limitada ao interior da sala (paredes em x=±7.78, teto em y=6.4,
+  // parede do fundo em z=-6.2) e o olhar é reapontado para o alvo.
+  const bounds = {
+    min: new THREE.Vector3(-7.3, 0.7, -5.6),
+    max: new THREE.Vector3(7.3, 6.0, 16),
+  };
+  controls.addEventListener("change", () => {
+    const before = camera.position.clone();
+    camera.position.clamp(bounds.min, bounds.max);
+    if (!camera.position.equals(before)) camera.lookAt(controls.target);
+  });
   let quality = "balanced";
   function resize() {
     const { width, height } = container.getBoundingClientRect();

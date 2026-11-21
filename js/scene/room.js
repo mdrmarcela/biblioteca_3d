@@ -61,6 +61,25 @@ export function buildRoom(ctx) {
     );
     sky.position.z = 0.07;
     window.add(sky);
+    // Vidraça translúcida (req. 05 — opacidade): MeshPhysicalMaterial com
+    // transparent + opacity baixa e clearcoat para um brilho de vidro.
+    const glass = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.8, 3.08),
+      new THREE.MeshPhysicalMaterial({
+        color: "#bfe0ee",
+        transparent: true,
+        opacity: 0.16,
+        roughness: 0.05,
+        metalness: 0,
+        clearcoat: 1,
+        clearcoatRoughness: 0.08,
+        side: THREE.DoubleSide,
+        depthWrite: false, // translúcidos não devem escrever no z-buffer
+      }),
+    );
+    glass.position.z = 0.115;
+    glass.renderOrder = 1;
+    window.add(glass);
     ctx.animatedObjects.sky = sky;
     ctx.animatedObjects.nightSky = starTex;
     ctx.animatedObjects.daySky = textureFromCanvas(512, 512, (c, w, h) => {

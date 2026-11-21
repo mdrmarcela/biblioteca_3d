@@ -108,9 +108,25 @@ export function createTextures(renderer) {
     c.fill();
   });
   const floorMaterial = new THREE.MeshStandardMaterial({
-    map: floorTexture,
+    map: floorTexture, // textura procedural: serve de reserva se a imagem falhar
     roughness: 0.92,
   });
+  // Textura de imagem real (piso de tábuas de madeira, 450 × 450 px, já tratada
+  // para repetir sem emendas). O piso mede 16 × 13 m e cada ladrilho cobre
+  // 1,6 × 1,6 m, então o mapa se repete 16/1,6 vezes em U e 13/1,6 em V.
+  new THREE.TextureLoader().load(
+    "assets/piso.jpg",
+    (image) => {
+      image.colorSpace = THREE.SRGBColorSpace;
+      image.wrapS = image.wrapT = THREE.RepeatWrapping;
+      image.repeat.set(16 / 1.6, 13 / 1.6);
+      image.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      floorMaterial.map = image;
+      floorMaterial.needsUpdate = true;
+    },
+    undefined,
+    () => console.warn("assets/piso.jpg não encontrado; usando piso procedural."),
+  );
   const wallMaterial = new THREE.MeshStandardMaterial({
     map: wallpaperTexture,
     roughness: 0.97,
