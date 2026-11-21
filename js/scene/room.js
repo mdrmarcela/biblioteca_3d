@@ -62,13 +62,13 @@ export function buildRoom(ctx) {
     sky.position.z = 0.07;
     window.add(sky);
     // Vidraça translúcida (req. 05 — opacidade): MeshPhysicalMaterial com
-    // transparent + opacity baixa e clearcoat para um brilho de vidro.
+    // transparent + opacity, tom azulado e clearcoat para um brilho de vidro.
     const glass = new THREE.Mesh(
       new THREE.PlaneGeometry(2.8, 3.08),
       new THREE.MeshPhysicalMaterial({
-        color: "#bfe0ee",
+        color: "#7fb8d4",
         transparent: true,
-        opacity: 0.16,
+        opacity: 0.34,
         roughness: 0.05,
         metalness: 0,
         clearcoat: 1,
@@ -80,6 +80,35 @@ export function buildRoom(ctx) {
     glass.position.z = 0.115;
     glass.renderOrder = 1;
     window.add(glass);
+    // Reflexos diagonais: textura com canal alfa (fundo transparente) sobre o
+    // vidro. O que está atrás continua visível, mas "através" de uma superfície.
+    const reflection = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.8, 3.08),
+      new THREE.MeshBasicMaterial({
+        map: textureFromCanvas(256, 256, (c, w, h) => {
+          c.clearRect(0, 0, w, h);
+          c.translate(w / 2, h / 2);
+          c.rotate(-0.62);
+          for (const [x, width, alpha] of [
+            [-70, 46, 0.5],
+            [10, 18, 0.34],
+            [62, 70, 0.22],
+          ]) {
+            const g = c.createLinearGradient(x, 0, x + width, 0);
+            g.addColorStop(0, "rgba(255,255,255,0)");
+            g.addColorStop(0.5, `rgba(255,255,255,${alpha})`);
+            g.addColorStop(1, "rgba(255,255,255,0)");
+            c.fillStyle = g;
+            c.fillRect(x, -h, width, h * 2);
+          }
+        }),
+        transparent: true,
+        depthWrite: false,
+      }),
+    );
+    reflection.position.z = 0.118;
+    reflection.renderOrder = 2;
+    window.add(reflection);
     ctx.animatedObjects.sky = sky;
     ctx.animatedObjects.nightSky = starTex;
     ctx.animatedObjects.daySky = textureFromCanvas(512, 512, (c, w, h) => {
