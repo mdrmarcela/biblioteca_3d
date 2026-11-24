@@ -1,24 +1,52 @@
+<!-- Define que o documento utiliza HTML5. -->
 <!doctype html>
+
+<!-- Define o idioma da aplicação como português brasileiro. -->
 <html lang="pt-BR">
   <head>
+    <!-- Permite a utilização de acentos e caracteres especiais. -->
     <meta charset="UTF-8" />
+
+    <!-- Configura a visualização em dispositivos móveis.
+         viewport-fit=cover permite aproveitar a área da tela,
+         inclusive em dispositivos com recortes no display. -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+
+    <!-- Define a cor de tema utilizada por navegadores compatíveis. -->
     <meta name="theme-color" content="#18151a" />
+
+    <!-- Descrição da aplicação. -->
     <meta
       name="description"
       content="Explore a Biblioteca Aurora: um acervo fictício em uma experiência tridimensional interativa."
     />
+
+    <!-- Título exibido na aba do navegador. -->
     <title>Biblioteca Aurora | Experiência 3D</title>
+
+    <!-- Ícone da aplicação criado diretamente em SVG.
+         A imagem está incorporada na URL, sem arquivo externo. -->
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23251d20'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-size='45' fill='%23e2ba78'%3E✦%3C/text%3E%3C/svg%3E"
     />
+
+    <!-- Carrega os arquivos responsáveis pela estilização. -->
+
+    <!-- Estilos gerais, cores e componentes básicos. -->
     <link rel="stylesheet" href="css/base.css" />
+
+    <!-- Organização e posicionamento dos elementos. -->
     <link rel="stylesheet" href="css/layout.css" />
+
+    <!-- Adaptação da interface a diferentes tamanhos de tela. -->
     <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Mapeia os nomes das dependências JavaScript
+         para seus respectivos arquivos locais. -->
     <script type="importmap">
       {
         "imports": {
@@ -27,33 +55,92 @@
         }
       }
     </script>
+
+    <!-- Carrega o script responsável pela inicialização.
+         O atributo defer adia sua execução até que
+         o documento HTML tenha sido analisado. -->
     <script defer src="js/bootstrap.js"></script>
   </head>
+
   <body>
-    <a class="skip-link" href="#searchInput">Ir para o catálogo</a>
+
+    <!-- =================================================
+         ACESSIBILIDADE E AMBIENTE TRIDIMENSIONAL
+         ================================================= -->
+
+    <!-- Permite acessar diretamente o catálogo pelo teclado,
+         sem precisar percorrer todos os controles anteriores. -->
+    <a class="skip-link" href="#searchInput">
+      Ir para o catálogo
+    </a>
+
+    <!-- Contêiner onde o Three.js adicionará o Canvas WebGL.
+         É nesse elemento que a biblioteca 3D será exibida. -->
     <div
       id="scene"
       aria-label="Visualização tridimensional da biblioteca"
     ></div>
+
+    <!-- Camada decorativa que produz o efeito de vinheta.
+         É ignorada pelos leitores de tela. -->
     <div class="vignette" aria-hidden="true"></div>
+
+    <!-- =================================================
+         TELA DE CARREGAMENTO
+         ================================================= -->
+
+    <!-- Exibida enquanto a aplicação está sendo inicializada.
+         role="status" identifica uma região de status. -->
     <div id="loading" class="loading" role="status">
+
       <div class="loading-star">✦</div>
-      <strong>Biblioteca Aurora</strong
-      ><span>Abrindo um mundo entre páginas…</span>
+
+      <strong>Biblioteca Aurora</strong>
+
+      <span>Abrindo um mundo entre páginas…</span>
+
     </div>
+
+    <!-- Contêiner principal da interface.
+         O atributo inert impede temporariamente a interação
+         até que a inicialização seja concluída. -->
     <div id="app" inert>
+
+      <!-- =================================================
+           BARRA SUPERIOR
+           ================================================= -->
+
       <header class="ui topbar">
+
+        <!-- Identidade visual da aplicação. -->
         <div class="brand">
+
+          <!-- Ícone exclusivamente decorativo. -->
           <div class="brand-icon" aria-hidden="true">✦</div>
+
           <div>
             <div class="eyebrow">Um mundo entre páginas</div>
             <h1>Biblioteca Aurora</h1>
           </div>
+
         </div>
-        <nav class="top-actions" aria-label="Controles da experiência">
-          <button class="action primary" id="tourButton" aria-pressed="false">
+
+        <!-- Área de navegação com os controles principais. -->
+        <nav
+          class="top-actions"
+          aria-label="Controles da experiência"
+        >
+
+          <!-- Inicia ou interrompe a visita guiada. -->
+          <button
+            class="action primary"
+            id="tourButton"
+            aria-pressed="false"
+          >
             ▷ Visita guiada
           </button>
+
+          <!-- Alterna entre iluminação diurna e noturna. -->
           <button
             class="action"
             id="dayButton"
@@ -62,6 +149,8 @@
           >
             ☀ Dia
           </button>
+
+          <!-- Controla o estado das luminárias. -->
           <button
             class="action"
             id="lampButton"
@@ -70,20 +159,34 @@
           >
             ◉ Luz acesa
           </button>
-          <button class="action" id="aboutButton">Sobre o projeto</button>
+
+          <!-- Abre a janela de informações sobre o projeto. -->
+          <button class="action" id="aboutButton">
+            Sobre o projeto
+          </button>
+
         </nav>
       </header>
 
+      <!-- =================================================
+           CATÁLOGO INTERATIVO
+           ================================================= -->
+
+      <!-- Painel lateral contendo os livros disponíveis. -->
       <aside
         id="catalogPanel"
         class="ui catalog-panel"
         aria-label="Catálogo interativo"
       >
+
+        <!-- Cabeçalho do catálogo. -->
         <div class="panel-heading">
           <div>
             <div class="eyebrow">Acervo de demonstração</div>
             <h2>Encontre sua próxima<br />descoberta.</h2>
           </div>
+
+          <!-- Botão responsável por recolher o catálogo. -->
           <button
             id="closeCatalog"
             class="icon-button"
@@ -93,69 +196,149 @@
             −
           </button>
         </div>
+
+        <!-- Resumo da quantidade de livros e coleções. -->
         <div class="catalog-summary">
-          <span id="bookCount">144 volumes</span><span>3 coleções</span>
+          <span id="bookCount">144 volumes</span>
+          <span>3 coleções</span>
         </div>
-        <label class="search"
-          ><span aria-hidden="true">⌕</span
-          ><input
+
+        <!-- Campo de pesquisa dos livros. -->
+        <label class="search">
+
+          <!-- Ícone decorativo de pesquisa. -->
+          <span aria-hidden="true">⌕</span>
+
+          <!-- Campo utilizado pelo controlador do catálogo. -->
+          <input
             id="searchInput"
             type="search"
             placeholder="Título ou coleção…"
             aria-label="Buscar por título ou coleção"
             autocomplete="off"
-          /><button
+          />
+
+          <!-- Botão de limpeza da pesquisa.
+               Inicialmente permanece oculto. -->
+          <button
             id="clearSearch"
             class="icon-button"
             aria-label="Limpar busca"
             hidden
           >
             ×
-          </button></label
-        >
+          </button>
+
+        </label>
+
+        <!-- Grupo de filtros por categoria. -->
         <div
           id="categories"
           class="categories"
           role="group"
           aria-label="Filtrar por coleção"
         >
-          <button class="chip" data-category="Todos" aria-pressed="true">
+
+          <!-- O atributo data-category armazena a categoria
+               que será utilizada pelo JavaScript. -->
+
+          <button
+            class="chip"
+            data-category="Todos"
+            aria-pressed="true"
+          >
             Todos
           </button>
-          <button class="chip" data-category="Literatura" aria-pressed="false">
+
+          <button
+            class="chip"
+            data-category="Literatura"
+            aria-pressed="false"
+          >
             Literatura
           </button>
-          <button class="chip" data-category="Ciência" aria-pressed="false">
+
+          <button
+            class="chip"
+            data-category="Ciência"
+            aria-pressed="false"
+          >
             Ciência
           </button>
-          <button class="chip" data-category="Fantasia" aria-pressed="false">
+
+          <button
+            class="chip"
+            data-category="Fantasia"
+            aria-pressed="false"
+          >
             Fantasia
           </button>
+
         </div>
+
+        <!-- Controles adicionais do catálogo. -->
         <div class="catalog-tools">
-          <button id="favoritesButton" class="text-button" aria-pressed="false">
-            ♡ Salvos (0)</button
-          ><button id="resetFilters" class="text-button muted">
+
+          <!-- Ativa ou desativa o filtro de favoritos. -->
+          <button
+            id="favoritesButton"
+            class="text-button"
+            aria-pressed="false"
+          >
+            ♡ Salvos (0)
+          </button>
+
+          <!-- Restaura todos os filtros. -->
+          <button id="resetFilters" class="text-button muted">
             Limpar filtros
           </button>
+
         </div>
+
+        <!-- Cabeçalho dos resultados encontrados. -->
         <div class="result-title">
-          <span>Explore os volumes</span
-          ><span id="resultCount" role="status">144 resultados</span>
+
+          <span>Explore os volumes</span>
+
+          <!-- Contador atualizado dinamicamente pelo JavaScript.
+               role="status" permite anunciar suas alterações. -->
+          <span id="resultCount" role="status">
+            144 resultados
+          </span>
+
         </div>
+
+        <!-- Contêiner onde os resultados serão inseridos
+             dinamicamente pelo arquivo catalog.js. -->
         <div id="results" class="results"></div>
+
+        <!-- Rodapé do catálogo e controle da paginação. -->
         <footer class="catalog-footer">
-          <span id="visibleCount">12 de 144</span
-          ><button id="loadMore" class="text-button">Ver mais volumes</button>
+
+          <span id="visibleCount">12 de 144</span>
+
+          <!-- Carrega mais resultados na interface. -->
+          <button id="loadMore" class="text-button">
+            Ver mais volumes
+          </button>
+
         </footer>
       </aside>
 
+      <!-- =================================================
+           PAINEL DE INFORMAÇÕES DO LIVRO SELECIONADO
+           ================================================= -->
+
+      <!-- Inicialmente oculto.
+           Exibido quando um livro é selecionado. -->
       <aside
         id="bookPanel"
         class="ui book-panel"
         aria-labelledby="bookTitle"
         hidden
       >
+
+        <!-- Fecha os detalhes e remove a seleção do livro. -->
         <button
           id="closeBook"
           class="icon-button close"
@@ -163,39 +346,93 @@
         >
           ×
         </button>
+
         <div class="eyebrow">Da coleção Aurora</div>
+
+        <!-- Representação bidimensional da capa do livro.
+             Elemento exclusivamente decorativo. -->
         <div id="bookIcon" class="book-cover" aria-hidden="true">
-          <span>COLEÇÃO<br />AURORA</span><b>✦</b
-          ><small id="coverVolume">VOLUME 01</small>
+
+          <span>COLEÇÃO<br />AURORA</span>
+
+          <b>✦</b>
+
+          <small id="coverVolume">VOLUME 01</small>
+
         </div>
+
+        <!-- Elementos preenchidos dinamicamente
+             com os dados do livro selecionado. -->
         <div id="bookCategory" class="eyebrow"></div>
+
+        <!-- tabindex="-1" permite receber foco pelo JavaScript,
+             sem incluir o título na ordem normal da tecla Tab. -->
         <h2 id="bookTitle" tabindex="-1"></h2>
+
         <p id="bookAuthor" class="author"></p>
+
         <p id="bookDescription" class="description"></p>
+
+        <!-- Abre uma janela com informações adicionais. -->
         <button class="button-solid full" id="readButton">
-          Conhecer a obra <span aria-hidden="true">↗</span>
+          Conhecer a obra
+          <span aria-hidden="true">↗</span>
         </button>
+
+        <!-- Ações relacionadas ao livro selecionado. -->
         <div class="book-actions">
+
+          <!-- Adiciona ou remove o livro dos favoritos. -->
           <button
             class="button-outline"
             id="favoriteButton"
             aria-pressed="false"
           >
-            ♡ Salvar</button
-          ><button class="button-outline" id="returnButton">Recolocar</button>
+            ♡ Salvar
+          </button>
+
+          <!-- Remove a seleção e devolve o livro
+               à sua posição original. -->
+          <button class="button-outline" id="returnButton">
+            Recolocar
+          </button>
+
         </div>
+
+        <!-- Informa que os livros pertencem a um acervo fictício. -->
         <p class="fiction-note">
           Acervo fictício criado para esta experiência.
         </p>
+
       </aside>
 
+      <!-- =================================================
+           INDICADORES DO AMBIENTE
+           ================================================= -->
+
+      <!-- Exibe informações sobre a iluminação
+           e a vista atual da câmera. -->
       <div class="ui scene-label">
-        <span class="ambient-dot" aria-hidden="true"></span
-        ><span id="ambienceLabel">Luz da manhã</span
-        ><span class="label-divider">/</span
-        ><span id="viewLabel">Visão geral</span>
+
+        <span class="ambient-dot" aria-hidden="true"></span>
+
+        <span id="ambienceLabel">Luz da manhã</span>
+
+        <span class="label-divider">/</span>
+
+        <span id="viewLabel">Visão geral</span>
+
       </div>
+
+      <!-- =================================================
+           BARRA INFERIOR DE CONTROLES
+           ================================================= -->
+
       <footer class="ui bottom-bar">
+
+        <!-- Abre ou fecha o painel do catálogo.
+             aria-controls identifica o painel controlado.
+             aria-expanded informa seu estado atual. -->
         <button
           id="catalogToggle"
           class="action catalog-toggle"
@@ -204,29 +441,46 @@
         >
           ☷ Acervo
         </button>
+
+        <!-- Navegação entre as vistas predefinidas da câmera. -->
         <nav class="view-nav" aria-label="Vistas da biblioteca">
+
+          <!-- data-view identifica a vista correspondente
+               definida no controlador camera.js. -->
+
           <button data-view="overview" aria-pressed="true">
             <span>01</span>Geral
           </button>
+
           <button data-view="shelves" aria-pressed="false">
             <span>02</span>Estantes
           </button>
+
           <button data-view="table" aria-pressed="false">
             <span>03</span>Mesa
           </button>
+
           <button data-view="window" aria-pressed="false">
             <span>04</span>Janela
           </button>
+
         </nav>
+
+        <!-- Controles complementares da experiência. -->
         <div class="utility-actions">
+
+          <!-- Pausa ou retoma as animações decorativas. -->
           <button
             id="pauseButton"
             class="action"
             aria-pressed="false"
             title="Pausar animações decorativas"
           >
-            Ⅱ Animação</button
-          ><button
+            Ⅱ Animação
+          </button>
+
+          <!-- Abre ou fecha o painel de configurações. -->
+          <button
             id="settingsButton"
             class="action"
             aria-expanded="false"
@@ -234,27 +488,73 @@
           >
             ⚙ Ajustes
           </button>
+
         </div>
       </footer>
+
+      <!-- =================================================
+           PAINEL DE CONFIGURAÇÕES GRÁFICAS
+           ================================================= -->
+
+      <!-- Inicialmente permanece oculto. -->
       <div id="settingsPanel" class="ui settings-panel" hidden>
-        <label for="qualitySelect">Qualidade gráfica</label
-        ><select id="qualitySelect">
+
+        <!-- Identifica o campo de seleção da qualidade. -->
+        <label for="qualitySelect">Qualidade gráfica</label>
+
+        <!-- Permite alternar entre os modos gráficos.
+             Os valores são utilizados pelo controlador
+             responsável pelo ambiente. -->
+        <select id="qualitySelect">
+
           <option value="balanced">Equilibrada</option>
-          <option value="low">Leve (sem sombras)</option></select
-        ><button id="fullscreenButton" class="button-outline full">
+
+          <option value="low">Leve (sem sombras)</option>
+
+        </select>
+
+        <!-- Ativa ou desativa o modo tela cheia. -->
+        <button id="fullscreenButton" class="button-outline full">
           Tela cheia
         </button>
+
+        <!-- Orientação para dispositivos com menor desempenho. -->
         <p>Use o modo leve se a cena estiver lenta.</p>
+
       </div>
+
+      <!-- =================================================
+           INSTRUÇÕES DE NAVEGAÇÃO
+           ================================================= -->
+
       <div class="ui help">
-        Arraste para girar <span>·</span> Role para aproximar
-        <span>·</span> Clique em um livro
-        <button id="helpButton" class="text-button">Ver atalhos</button>
+
+        Arraste para girar <span>·</span>
+        Role para aproximar <span>·</span>
+        Clique em um livro
+
+        <!-- Abre a janela de ajuda com os atalhos de teclado. -->
+        <button id="helpButton" class="text-button">
+          Ver atalhos
+        </button>
+
       </div>
+
+      <!-- Área destinada às notificações temporárias.
+           role="status" auxilia os leitores de tela. -->
       <div id="toast" class="toast" role="status"></div>
+
     </div>
 
+    <!-- =================================================
+         JANELA MODAL
+         ================================================= -->
+
+    <!-- Elemento nativo do HTML para apresentação de diálogos.
+         Controlado pelo arquivo dialog.js. -->
     <dialog id="modal" class="modal" aria-labelledby="modalTitle">
+
+      <!-- Fecha a janela modal. -->
       <button
         id="modalClose"
         class="icon-button close"
@@ -262,18 +562,41 @@
       >
         ×
       </button>
+
+      <!-- Recebe dinamicamente o conteúdo HTML da janela. -->
       <div id="modalContent"></div>
+
     </dialog>
+
+    <!-- =================================================
+         TRATAMENTO DE ERROS
+         ================================================= -->
+
+    <!-- Painel exibido quando ocorre uma falha
+         durante a inicialização ou renderização. -->
     <section id="error" class="error-panel" role="alert" hidden>
+
       <span class="eyebrow">Vamos abrir a biblioteca</span>
+
       <h2>A cena ainda não carregou.</h2>
+
+      <!-- Mensagem preenchida pelo JavaScript. -->
       <p id="errorMessage"></p>
-      <button id="reloadButton" class="button-solid">Tentar novamente</button>
+
+      <!-- Recarrega a aplicação para uma nova tentativa. -->
+      <button id="reloadButton" class="button-solid">
+        Tentar novamente
+      </button>
+
     </section>
-    <noscript
-      ><div class="error-panel">
+
+    <!-- Exibe uma orientação caso o JavaScript esteja
+         desabilitado no navegador. -->
+    <noscript>
+      <div class="error-panel">
         Ative o JavaScript para explorar a biblioteca tridimensional.
-      </div></noscript
-    >
+      </div>
+    </noscript>
+
   </body>
 </html>

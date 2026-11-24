@@ -1,6 +1,6 @@
 /* Tokens visuais, elementos comuns e acessibilidade. */
 :root {
-  color-scheme: dark;
+  color-scheme: dark; 
   --bg: #18151a;
   --panel: rgba(28, 24, 26, 0.95);
   --line: rgba(226, 186, 120, 0.22);
@@ -87,6 +87,8 @@ h3 {
 .full {
   width: 100%;
 }
+
+/*BOTÕES*/
 .action,
 .button-outline,
 .button-solid {
@@ -153,6 +155,8 @@ h3 {
   right: 12px;
   top: 12px;
 }
+
+/*ACESSIBILIDADE */
 .skip-link {
   position: fixed;
   top: -100px;
@@ -165,6 +169,7 @@ h3 {
 .skip-link:focus {
   top: 12px;
 }
+/*BARRA DE ROLAGEM*/ 
 ::-webkit-scrollbar {
   width: 5px;
   height: 4px;
