@@ -1,4 +1,4 @@
-# 📚 Biblioteca Aurora — Experiência 3D Interativa
+# Biblioteca Aurora — Experiência 3D Interativa
 
 **Biblioteca Aurora** é uma aplicação web tridimensional desenvolvida como trabalho final de **Computação Gráfica**. O projeto permite explorar uma biblioteca virtual, interagir com livros nas estantes e conhecer recursos de modelagem, iluminação, animação e interação em tempo real utilizando **JavaScript, Three.js e WebGL**.
 
@@ -39,7 +39,7 @@ A biblioteca Three.js e o módulo OrbitControls já estão incluídos em `vendor
 
 ### Pré-requisitos
 
-- Navegador moderno com suporte a **WebGL** e módulos JavaScript.
+- Navegador com suporte a **WebGL** e módulos JavaScript.
 - Um servidor HTTP local, como o **Live Server** do VS Code **ou** o script Python que acompanha o projeto.
 
 ### Opção 1 — Live Server no VS Code
